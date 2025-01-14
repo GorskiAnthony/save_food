@@ -1,7 +1,12 @@
 import { Radio, RadioGroup } from "@headlessui/react";
-import { useState } from "react";
-
-import { LuWifiZero, LuWifiLow, LuWifiHigh, LuWifi } from "react-icons/lu";
+import { useEffect, useState } from "react";
+import {
+	LuWifiZero,
+	LuWifiLow,
+	LuWifiHigh,
+	LuWifi,
+	LuTrash2,
+} from "react-icons/lu";
 
 interface QuantityOption {
 	name: JSX.Element;
@@ -14,6 +19,11 @@ function classNames(...classes: (string | boolean | undefined)[]): string {
 }
 
 const quantityOptions: QuantityOption[] = [
+	{
+		name: <LuTrash2 className="inline-block w-5 h-5" />,
+		inStock: true,
+		value: 0,
+	},
 	{
 		name: <LuWifiZero className="inline-block w-5 h-5" />,
 		inStock: true,
@@ -37,27 +47,49 @@ const quantityOptions: QuantityOption[] = [
 ];
 
 function Card({ food }: { food: string }) {
-	const [selectedQuantity, setSelectedQuantity] = useState(
-		quantityOptions[0]
+	const [selectedQuantity, setSelectedQuantity] = useState<number | null>(
+		null
 	);
 
-	const handleClick = ({ value, food }: { value: number; food: string }) => {
-		const selected = JSON.stringify({ food, value });
+	useEffect(() => {
+		const existingData = localStorage.getItem("food");
+		const data = existingData ? JSON.parse(existingData) : [];
+		const selectedFood = data.find(
+			(item: { food: string }) => item.food === food
+		);
 
-		localStorage.setItem("food", selected);
+		if (selectedFood) {
+			setSelectedQuantity(selectedFood.value);
+		}
+	}, [food]);
+
+	const handleClick = ({ value, food }: { value: number; food: string }) => {
+		// Je récupère les données existantes dans le localStorage
+		const existingData = localStorage.getItem("food");
+		const data = existingData ? JSON.parse(existingData) : [];
+		// Je met à jour les données
+		const updatedData =
+			value === 0
+				? data.filter((item: { food: string }) => item.food !== food)
+				: [
+						...data.filter(
+							(item: { food: string }) => item.food !== food
+						),
+						{ food, value },
+				  ];
+
+		// Je sauvegarde les données
+		localStorage.setItem("food", JSON.stringify(updatedData));
+		// Je met à jour l'état local
+		setSelectedQuantity(value === 0 ? null : value);
 	};
 
 	return (
 		<section>
-			<img
-				src="https://picsum.photos/200"
-				alt="card "
-				className="lg:h-48 md:h-36 w-full object-cover object-center"
-			/>
-
+			<h1 className="text-lg font-bold">{food}</h1>
 			<RadioGroup
 				value={selectedQuantity}
-				onChange={setSelectedQuantity}
+				onChange={(value) => setSelectedQuantity(value)}
 				className="mt-2 flex gap-2"
 			>
 				{quantityOptions.map((option, index) => (
@@ -78,37 +110,6 @@ function Card({ food }: { food: string }) {
 					</Radio>
 				))}
 			</RadioGroup>
-
-			{/* <div className="flex">
-				<div>
-					<input
-						type="radio"
-						name={`quantity-${index}`}
-						className="rounded-md bg-red-50 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-200 flex-1"
-					/>
-				</div>
-				<div>
-					<input
-						type="radio"
-						name={`quantity-${index}`}
-						className="rounded-md bg-yellow-50 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-yellow-200 flex-1"
-					/>
-				</div>
-				<div>
-					<input
-						type="radio"
-						name={`quantity-${index}`}
-						className="rounded-md bg-green-50 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-green-200 flex-1"
-					/>
-				</div>
-				<div>
-					<input
-						type="radio"
-						name={`quantity-${index}`}
-						className="rounded-md bg-indigo-50 px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-indigo-200 flex-1"
-					/>
-				</div>
-			</div> */}
 		</section>
 	);
 }
