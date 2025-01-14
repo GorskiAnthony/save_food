@@ -4,25 +4,15 @@ import { IoMdAddCircle } from "react-icons/io";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
 import { useState } from "react";
+import { useFoodContext } from "../../contexts/FoodContext";
 
 function Layout() {
 	const [valueFood, setValueFood] = useState<string>("");
+	const { addFood } = useFoodContext();
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-
-		const existingData = localStorage.getItem("listFood");
-		const data = existingData ? JSON.parse(existingData) : [];
-
-		if (data.includes(valueFood)) {
-			alert("Cet aliment existe déjà dans la liste !");
-			return;
-		}
-
-		const updatedData = [...data, valueFood];
-
-		localStorage.setItem("listFood", JSON.stringify(updatedData));
-
+		addFood(valueFood);
 		setValueFood("");
 	};
 
