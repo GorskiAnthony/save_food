@@ -9,7 +9,6 @@ const FoodContext = createContext<FoodContextType | undefined>(undefined);
 
 export const FoodProvider = ({ children }: { children: ReactNode }) => {
 	const [listFood, setListFood] = useState<string[]>(() => {
-		// Charger les données du localStorage au démarrage
 		const existingData = localStorage.getItem("listFood");
 		return existingData ? JSON.parse(existingData) : [];
 	});
