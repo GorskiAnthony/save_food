@@ -1,11 +1,14 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./pages/Layout/Layout.tsx";
 import App from "./App.tsx";
 import { FoodProvider } from "./contexts/FoodContext.tsx";
+
+import "react-toastify/dist/ReactToastify.css";
+import "./index.css";
 
 const router = createBrowserRouter([
 	{
@@ -31,6 +34,7 @@ createRoot(rootElement).render(
 	<StrictMode>
 		<FoodProvider>
 			<RouterProvider router={router} />
+			<ToastContainer />
 		</FoodProvider>
 	</StrictMode>
 );

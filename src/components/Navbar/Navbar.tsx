@@ -1,6 +1,20 @@
 import { Link } from "react-router-dom";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { useFoodContext } from "../../contexts/FoodContext";
 
 function Navbar() {
+	const { resetList } = useFoodContext();
+
+	const handleResetList = () => {
+		const confirmation = window.confirm(
+			"Êtes-vous sûr de vouloir supprimer tous les aliments de la liste ?"
+		);
+
+		if (confirmation) {
+			resetList();
+		}
+	};
+
 	return (
 		<header className="text-gray-600 body-font">
 			<div className="container flex flex-col flex-wrap items-center p-5 mx-auto md:flex-row justify-between">
@@ -22,6 +36,13 @@ function Navbar() {
 					</svg>
 					<span className="ml-3 text-xl">Save food</span>
 				</Link>
+				<button
+					className="bg-gray-100 px-6 py-2 flex items-center text-sm text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none"
+					onClick={handleResetList}
+				>
+					Supprimer la liste
+					<FaRegTrashAlt className="ml-2 w-4 h-4 text-red-500" />
+				</button>
 			</div>
 		</header>
 	);
